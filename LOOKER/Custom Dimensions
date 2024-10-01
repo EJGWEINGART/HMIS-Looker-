@@ -1,0 +1,35 @@
+
+Name Quality
+
+case(
+  when(
+    (
+      ${data_quality.name_quality} = "Client doesn't know" OR
+      ${data_quality.name_quality} = "Client prefers not to answer"
+    ),
+    "Client Doesn't Know OR Preferred NOT to Answer"
+  ),
+  when(
+    (
+      ${data_quality.name_quality} = "Data not collected" OR
+      (
+        is_null(${data_quality.first_name}) AND
+        is_null(${data_quality.last_name})
+      )
+    ),
+    "Missing Data"
+  ),
+  when(
+    (
+      ${data_quality.name_quality} = "Partial, street name, or code name reported" OR
+      is_null(${data_quality.first_name}) OR
+        is_null(${data_quality.last_name})
+    ),
+    "Data Issues"
+  ),
+  "No Issues"
+)
+
+
+
+==================================
