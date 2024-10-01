@@ -134,3 +134,11 @@ case(
   "No Issues"
 )
 
+===================================
+Gender
+
+case(
+  when(${dq_client_demographics.gender_text} = "Client doesn’t know" OR ${dq_client_demographics.gender_text} = "Client prefers not to answer", "Client Doesn't Know OR Preferred NOT to Answer"),
+  when(${dq_client_demographics.gender_text} = "Data not collected" OR is_null(${dq_client_demographics.gender_text}), "Missing Data"), "No Issues"
+)
+
