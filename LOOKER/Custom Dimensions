@@ -35,7 +35,6 @@ case(
 ==================================
 SSN QUALITY
 
-
 case(
   when(
     is_null(${data_quality.ssn}),
@@ -48,6 +47,10 @@ case(
   when(
     ${data_quality.ssn_quality} = "Data not collected",
     "Missing Data"
+  ),
+  when(
+    ${data_quality.ssn_quality} = "Full SSN Reported",
+    "No Issues"
   ),
   when(
     ${data_quality.ssn_quality} = "Approximate or partial SSN reported" OR
