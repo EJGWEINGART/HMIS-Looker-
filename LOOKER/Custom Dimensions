@@ -38,6 +38,18 @@ SSN QUALITY
 
 case(
   when(
+    is_null(${data_quality.ssn}),
+    "Missing Data"
+  ),
+  when(
+    ${data_quality.ssn_quality} = "Client doesn't know" OR ${data_quality.ssn_quality} = "Client prefers not to answer",
+    "Client Doesn't Know OR Preferred NOT to Answer"
+  ),
+  when(
+    ${data_quality.ssn_quality} = "Data not collected",
+    "Missing Data"
+  ),
+  when(
     ${data_quality.ssn_quality} = "Approximate or partial SSN reported" OR
     length(${data_quality.ssn}) != 9 OR
     substring(${data_quality.ssn}, 6, 4) = "0000" OR
@@ -56,8 +68,7 @@ case(
       substring(${data_quality.ssn}, 7, 1) = substring(${data_quality.ssn}, 1, 1) AND
       substring(${data_quality.ssn}, 8, 1) = substring(${data_quality.ssn}, 1, 1) AND
       substring(${data_quality.ssn}, 9, 1) = substring(${data_quality.ssn}, 1, 1)
-    )
-    ,
+    ),
     "Data Issues"
   ),
   "No Issues"
