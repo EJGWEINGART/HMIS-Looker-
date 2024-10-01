@@ -33,7 +33,7 @@ case(
 
 
 ==================================
-SSN QUALITY
+DOB QUALITY
 
 case(
   when(
@@ -58,6 +58,59 @@ case(
       ) OR
       ${data_quality.birth_date} < date(1915, 1, 1) OR
       ${data_quality.birth_date} > ${data_quality.added_date}
+    ),
+    "Data Issues"
+  ),
+  "No Issues"
+)
+
+
+
+=================================
+SSN QUALITY
+
+
+
+
+
+
+
+case(
+  when(
+    is_null(${data_quality.ssn}),
+    "Missing Data"
+  ),
+  when(
+    ${data_quality.ssn_quality} = "Client doesn't know" OR ${data_quality.ssn_quality} = "Client prefers not to answer",
+    "Client Doesn't Know OR Preferred NOT to Answer"
+  ),
+  when(
+    ${data_quality.ssn_quality} = "Data not collected",
+    "Missing Data"
+  ),
+  when(
+    ${data_quality.ssn_quality} = "Full SSN Reported",
+    "No Issues"
+  ),
+  when(
+    ${data_quality.ssn_quality} = "Approximate or partial SSN reported" OR
+    length(${data_quality.ssn}) != 9 OR
+    substring(${data_quality.ssn}, 6, 4) = "0000" OR
+    substring(${data_quality.ssn}, 1, 3) = "000" OR
+    substring(${data_quality.ssn}, 1, 3) = "666" OR
+    substring(${data_quality.ssn}, 1, 1) = "9" OR
+    substring(${data_quality.ssn}, 4, 2) = "00" OR
+    ${data_quality.ssn} = "123456789" OR
+    ${data_quality.ssn} = "987654321" OR
+    (
+      substring(${data_quality.ssn}, 2, 1) = substring(${data_quality.ssn}, 1, 1) AND
+      substring(${data_quality.ssn}, 3, 1) = substring(${data_quality.ssn}, 1, 1) AND
+      substring(${data_quality.ssn}, 4, 1) = substring(${data_quality.ssn}, 1, 1) AND
+      substring(${data_quality.ssn}, 5, 1) = substring(${data_quality.ssn}, 1, 1) AND
+      substring(${data_quality.ssn}, 6, 1) = substring(${data_quality.ssn}, 1, 1) AND
+      substring(${data_quality.ssn}, 7, 1) = substring(${data_quality.ssn}, 1, 1) AND
+      substring(${data_quality.ssn}, 8, 1) = substring(${data_quality.ssn}, 1, 1) AND
+      substring(${data_quality.ssn}, 9, 1) = substring(${data_quality.ssn}, 1, 1)
     ),
     "Data Issues"
   ),
