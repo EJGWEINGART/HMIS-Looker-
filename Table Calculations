@@ -1,0 +1,149 @@
+SSN CARD
+
+if(
+  contains(${list_of_client_file_name}, "Social Security Card"),
+  1,
+  0
+)
+
+Birth Certificate
+if(
+  contains(${list_of_client_file_name}, "Birth Certificate or Hospital Record of Birth"),
+  1,
+  0
+)
+CDL or State ID
+
+if(
+  contains(${list_of_client_file_name}, "Driver’s License/State ID Card/Photo ID/ School Identification Card"),
+  1,
+  0
+)
+
+
+Proof of Income
+
+if(
+  length(
+    concat(
+      if(contains(${list_of_client_file_name}, "Pay Stub"), "Pay Stub, ", ""),
+      if(contains(${list_of_client_file_name}, "Supplemental Security Disability Income (SSDI) Forms"), "SSDI, ", ""),
+      if(contains(${list_of_client_file_name}, "Supplemental Security Income (SSI) Forms"), "SSI, ", ""),
+      if(contains(${list_of_client_file_name}, "General Relief (GR) Form"), "GR, ", ""),
+      if(contains(${list_of_client_file_name}, "Food Stamp Card or Award Letter"), "Food Stamp, ", ""),
+      if(contains(${list_of_client_file_name}, "CalWORKS Forms"), "CalWORKS, ", "")
+    )
+  ) > 0,
+  concat(
+    "1 - ",
+    substring(
+      concat(
+        if(contains(${list_of_client_file_name}, "Pay Stub"), "Pay Stub, ", ""),
+        if(contains(${list_of_client_file_name}, "Supplemental Security Disability Income (SSDI) Forms"), "SSDI, ", ""),
+        if(contains(${list_of_client_file_name}, "Supplemental Security Income (SSI) Forms"), "SSI, ", ""),
+        if(contains(${list_of_client_file_name}, "General Relief (GR) Form"), "GR, ", ""),
+        if(contains(${list_of_client_file_name}, "Food Stamp Card or Award Letter"), "Food Stamp, ", ""),
+        if(contains(${list_of_client_file_name}, "CalWORKS Forms"), "CalWORKS, ", "")
+      ),
+      0,
+      length(
+        concat(
+          if(contains(${list_of_client_file_name}, "Pay Stub"), "Pay Stub, ", ""),
+          if(contains(${list_of_client_file_name}, "Supplemental Security Disability Income (SSDI) Forms"), "SSDI, ", ""),
+          if(contains(${list_of_client_file_name}, "Supplemental Security Income (SSI) Forms"), "SSI, ", ""),
+          if(contains(${list_of_client_file_name}, "General Relief (GR) Form"), "GR, ", ""),
+          if(contains(${list_of_client_file_name}, "Food Stamp Card or Award Letter"), "Food Stamp, ", ""),
+          if(contains(${list_of_client_file_name}, "CalWORKS Forms"), "CalWORKS, ", "")
+        )
+      ) - 2
+    )
+  ),
+  "0"
+)
+
+
+
+
+Health Insurance
+
+
+if(
+  length(
+    concat(
+      if(contains(${list_of_client_file_name}, "Medicaid or Medicare Card"), "Medicare/Medicaid, ", ""),
+      if(contains(${list_of_client_file_name}, "Health Insurance Documentation"), "Other Health Insurance, ", "")
+    )
+  ) > 0,
+  concat(
+    "1 - ",
+    substring(
+      concat(
+        if(contains(${list_of_client_file_name}, "Medicaid or Medicare Card"), "Medicare/Medicaid, ", ""),
+        if(contains(${list_of_client_file_name}, "Health Insurance Documentation"), "Other Health Insurance, ", "")
+      ),
+      0,
+      length(
+        concat(
+          if(contains(${list_of_client_file_name}, "Medicaid or Medicare Card"), "Medicare/Medicaid, ", ""),
+          if(contains(${list_of_client_file_name}, "Health Insurance Documentation"), "Other Health Insurance, ", "")
+        )
+      ) - 2
+    )
+  ),
+  "0"
+)
+
+
+COVID Certifications
+
+
+
+if(
+  length(
+    concat(
+      if(
+        contains(${list_of_client_file_name}, "COVID Self Certification"),
+        "Self Certification, ",
+        ""
+      ),
+      if(
+        contains(${list_of_client_file_name}, "COVID Vaccination Card (Uploading Confirms Client Verbally Consented)"),
+        "Vaccination Card, ",
+        ""
+      )
+    )
+  ) > 0,
+  concat(
+    "1 - ",
+    substring(
+      concat(
+        if(
+          contains(${list_of_client_file_name}, "COVID Self Certification"),
+          "Self Certification, ",
+          ""
+        ),
+        if(
+          contains(${list_of_client_file_name}, "COVID Vaccination Card (Uploading Confirms Client Verbally Consented)"),
+          "Vaccination Card, ",
+          ""
+        )
+      ),
+      0,
+      length(
+        concat(
+          if(
+            contains(${list_of_client_file_name}, "COVID Self Certification"),
+            "Self Certification, ",
+            ""
+          ),
+          if(
+            contains(${list_of_client_file_name}, "COVID Vaccination Card (Uploading Confirms Client Verbally Consented)"),
+            "Vaccination Card, ",
+            ""
+          )
+        )
+      ) - 2
+    )
+  ),
+  "0"
+)
