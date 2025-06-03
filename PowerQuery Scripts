@@ -1,1 +1,47 @@
+6.1 CES Status
+Description: flags whether the client’s CES assessment is current, overdue, or missing.
+if [Last CES Assessment Date] = null then
+    "CES Not Done"
+else if Duration.Days(Date.From(DateTime.LocalNow()) 
+       - Date.From([Last CES Assessment Date])) > 365 then
+    "Renewal Overdue"
+else
+    "Current"
+________________________________________
+6.2 Document Ready
+Description: returns “Document Ready” only when all required identity documents are present.
+if [CDL or State ID] = 1 
+   and [SSN CARD] = 1 
+   and Text.Contains([Proof of Income], "1") then
+    "Document Ready" 
+else
+    "Not Document Ready"
+________________________________________
+6.3 Housing Matching Ready
+Description: requires the three documents plus a CES score ≥ 8 (null scores count as 0).
+let
+    score = if [Last CES Assessment Score] = null 
+            then 0 
+            else [Last CES Assessment Score]
+in
+    if [CDL or State ID] = 1
+       and [SSN CARD]  = 1
+       and Text.Contains([Proof of Income], "1")
+       and score >= 8 then
+        "Housing Matching Ready"
+    else
+        "Not Housing Matching Ready"
+________________________________________
+6.4 Intervention Alert
+Description: highlights high-priority clients based on days in project and document status.
+if [CES Assessment Score] = null 
+   or [CES Assessment Score] < 8 then
+    null
+else if [Enrollments Days in Project] >= 120 then
+    "Over 120 days – escalate"
+else if [Enrollments Days in Project] >= 75 
+     and [Document Ready Status] = "Not Document Ready" then
+    "Approaching 90 days – action needed"
+else
+    null
 
