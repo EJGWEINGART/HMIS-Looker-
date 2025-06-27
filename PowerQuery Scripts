@@ -1,12 +1,13 @@
 6.1 CES Status
 Description: flags whether the client’s CES assessment is current, overdue, or missing.
-if [Last CES Assessment Date] = null then
+if [Latest CES Assessment Date] = null then
     "CES Not Done"
 else if Duration.Days(Date.From(DateTime.LocalNow()) 
-       - Date.From([Last CES Assessment Date])) > 365 then
+       - Date.From([Latest CES Assessment Date])) > 365 then
     "Renewal Overdue"
 else
     "Current"
+
 ________________________________________
 6.2 Document Ready
 Description: returns “Document Ready” only when all required identity documents are present.
@@ -16,13 +17,14 @@ if [CDL or State ID] = 1
     "Document Ready" 
 else
     "Not Document Ready"
+
 ________________________________________
 6.3 Housing Matching Ready
 Description: requires the three documents plus a CES score ≥ 8 (null scores count as 0).
 let
-    score = if [Last CES Assessment Score] = null 
+    score = if [CES Assessment Score] = null 
             then 0 
-            else [Last CES Assessment Score]
+            else [CES Assessment Score]
 in
     if [CDL or State ID] = 1
        and [SSN CARD]  = 1
@@ -31,129 +33,14 @@ in
         "Housing Matching Ready"
     else
         "Not Housing Matching Ready"
-________________________________________
-6.4 Intervention Alert
-Description: highlights high-priority clients based on days in project and document status.
-PowerBI Weekly Report Guide
-1 Prerequisites & Navigation
-1.	Log in to HMIS Looker with your regular HMIS credentials.
-2.	Select Reports ➔ Data Analysis ➔ Weingart Center Association Reports.
-3.	Under Weekly Snapshot, you will find the six canned reports used in this workflow.
-________________________________________
-2 Run Weekly Snapshot Reports
-Create each report in the table below, confirming fields and filters before download.
-Snapshot Report	Mandatory Columns	Filters to Apply	Export Settings
-Bed Inventory Data	HMIS ID • Program Name • Inventory – Bed Name	Program Name • Bed Occupancy → Latest per Bed = Yes • Enrollments → Active = Yes
-Program Sites Address → Bldg Address
-	Gear icon ➔ Download ➔ Excel/CSV • Results = As displayed • Data values = Formatted • All Results 
 
-Case Notes (Enrollment)	HMIS ID • Program Name • Date Added (Month) • Client Notes Count • Staff Full Name	Program Name • Date Added = This Month • Active = Yes
-Program Sites Address → Bldg Address
-
-
-
-	Same as above
-CES Assessment	HMIS ID • Program Name • Assessment ID • Assessment Date • Assessment Score • Is Coordinated Entry	Program Name • Is Coordinated Entry = Yes • Active = Yes
-Program Sites Address → Bldg Address
-	Same as above
-Services	HMIS ID • Program Name • Date Added (Month) • Services Count	Program Name • Service Added Date = This Month
-Program Sites Address → Bldg Address	Same as above
-Potential Profile Duplicates	Personal ID • List of Client Names • Alias • Last 4 SSN • DOB Count • Gender • Race • Ethnicity • Veteran Status • HMIS IDs • Duplicate Profile Count	Clients Deleted = No • Client ID Count > 1 • Program Name
-Program Sites Address → Bldg Address	Same as above
-Client Program Data	HMIS ID • Active (Y/N) • Client Name • Active ROI (Y/N) • SSN Quality • Project Start Date • Days in Project • Assigned Staff • POC Name/Phone/Email/Date • Last Assessment ID/Date • List of Client Files	Clients Deleted = No • Client ID Count > 1 • Program Name
-Program Sites Address → Bldg Address
-	Same as above
-________________________________________
-
-3. Conditional “Flag” Columns: Upload File
-3.1 Looker Table Calculations
-1.	In any Explore, click Custom Fields ➔ +Add ➔ Table Calculation.
-2.	Enter an if(contains()) expression. Example:
-if( contains(${list_of_client_file_name}, "Social Security Card"), 1, 0 )
-3.	Repeat for each document type you need to flag.
-4.	Save the Look or schedule delivery as needed.
-5.	Reference the full library of expressions here: https://github.com/EJGWEINGART/HMIS-Looker-/blob/main/Table%20Calculations
-3.2 Power BI / Power Query Alternative
-1.	Transform Data ➔ Add Column ➔ Conditional Column.
-2.	GUI method:
-Column Name = List of Client Files • Operator = contains • Value = “Social Security Card” • Output = 1 • Else = 0. 
-3.	Users can also write an M-code custom column:
-= if Text.Contains([List_of_Client_Files], "Social Security Card") then 1 else 0
-4.1 Duplicate Program Enrollments
-1.	Convert the Client Program Data sheet to an Excel Table.
-2.	Change the Client Unique ID column’s data type to Text.
-3.	Home ▶ Conditional Formatting ▶ Highlight Cells Rules ▶ Duplicate Values.
-4.	Copy the highlighted rows to a new sheet named Duplicate Program Enrollment for manager review.
-________________________________________
-4.2 Program Data Deduplication
-1.	Apply conditional formatting to highlight duplicate HMIS ID values.
-2.	Sort by HMIS ID and Enrollments – Project Start Date (newest → oldest).
-3.	Data ▶ Remove Duplicates — select HMIS ID only.
-________________________________________
-4.3 CES Assessment Deduplication
-1.	Open the downloaded CES Assessment table.
-2.	Highlight duplicate HMIS ID values with conditional formatting.
-3.	Sort by HMIS ID and Assessment Date (newest → oldest).
-4.	Data ▶ Remove Duplicates — select HMIS ID only.
-________________________________________
-4.4 Formatting Tables
-•	Set all Unique ID fields to Text.
-•	Set all date fields to the Date data type.
-•	Use Transform ▶ Format ▶ Trim and Clean on every text column.
-________________________________________
-5 Joining Weekly Snapshots in Power BI
-1.	Get Data for all six CSV/Excel exports.
-2.	In Power Query Editor:
-o	Ensure key columns (HMIS ID) are Text.
-o	Home ▶ Merge Queries As New ▶ Left Outer Join:
-	Left table = Client Data
-	Right table = Case Notes
-	Key = HMIS ID
-o	Expand Case Count and rename to Current Month Case Count.
-o	Repeat the merge with Services, CES Assessments, and Bed Inventory.
-3.	Close & Apply to load the merged data into the model.
-________________________________________
-6 Creating Additional “Flag” Columns
-6.1 CES Status
-Description: flags whether the client’s CES assessment is current, overdue, or missing.
-if [Last CES Assessment Date] = null then
-    "CES Not Done"
-else if Duration.Days(Date.From(DateTime.LocalNow()) 
-       - Date.From([Last CES Assessment Date])) > 365 then
-    "Renewal Overdue"
-else
-    "Current"
-________________________________________
-6.2 Document Ready
-Description: returns “Document Ready” only when all required identity documents are present.
-if [CDL or State ID] = 1 
-   and [SSN CARD] = 1 
-   and Text.Contains([Proof of Income], "1") then
-    "Document Ready" 
-else
-    "Not Document Ready"
-________________________________________
-6.3 Housing Matching Ready
-Description: requires the three documents plus a CES score ≥ 8 (null scores count as 0).
-let
-    score = if [Last CES Assessment Score] = null 
-            then 0 
-            else [Last CES Assessment Score]
-in
-    if [CDL or State ID] = 1
-       and [SSN CARD]  = 1
-       and Text.Contains([Proof of Income], "1")
-       and score >= 8 then
-        "Housing Matching Ready"
-    else
-        "Not Housing Matching Ready"
 ________________________________________
 6.4 Intervention Alert
 Description: highlights high-priority clients based on days in project and document status.
 
 let
     cesStatus   = [CES Status],
-    cesScore    = [CES Score],
+    cesScore    = [CES Assessment Score],
     days        = [Enrollments Days in Project],
     docsReady   = [Document Ready] <> "Not Document Ready",
     lowCES      = cesScore = null or cesScore < 8,
