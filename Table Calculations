@@ -38,7 +38,9 @@ if(
       if(contains(${list_of_client_file_name}, "Supplemental Security Income (SSI) Forms"), "SSI, ", ""),
       if(contains(${list_of_client_file_name}, "General Relief (GR) Form"), "GR, ", ""),
       if(contains(${list_of_client_file_name}, "Food Stamp Card or Award Letter"), "Food Stamp, ", ""),
-      if(contains(${list_of_client_file_name}, "CalWORKS Forms"), "CalWORKS, ", "")
+      if(contains(${list_of_client_file_name}, "CalWORKS Forms"), "CalWORKS, ", ""),
+      if(contains(${list_of_client_file_name}, "Form 1087 - Self Declaration of Income/No Income Form"), "Form 1087, ", ""),
+      if(contains(${list_of_client_file_name}, "Form 1084 - 3rd Party Income Verification"), "Form 1084, ", "")
     )
   ) > 0,
   concat(
@@ -50,7 +52,9 @@ if(
         if(contains(${list_of_client_file_name}, "Supplemental Security Income (SSI) Forms"), "SSI, ", ""),
         if(contains(${list_of_client_file_name}, "General Relief (GR) Form"), "GR, ", ""),
         if(contains(${list_of_client_file_name}, "Food Stamp Card or Award Letter"), "Food Stamp, ", ""),
-        if(contains(${list_of_client_file_name}, "CalWORKS Forms"), "CalWORKS, ", "")
+        if(contains(${list_of_client_file_name}, "CalWORKS Forms"), "CalWORKS, ", ""),
+        if(contains(${list_of_client_file_name}, "Form 1087 - Self Declaration of Income/No Income Form"), "Form 1087, ", ""),
+        if(contains(${list_of_client_file_name}, "Form 1084 - 3rd Party Income Verification"), "Form 1084, ", "")
       ),
       0,
       length(
@@ -60,14 +64,15 @@ if(
           if(contains(${list_of_client_file_name}, "Supplemental Security Income (SSI) Forms"), "SSI, ", ""),
           if(contains(${list_of_client_file_name}, "General Relief (GR) Form"), "GR, ", ""),
           if(contains(${list_of_client_file_name}, "Food Stamp Card or Award Letter"), "Food Stamp, ", ""),
-          if(contains(${list_of_client_file_name}, "CalWORKS Forms"), "CalWORKS, ", "")
+          if(contains(${list_of_client_file_name}, "CalWORKS Forms"), "CalWORKS, ", ""),
+          if(contains(${list_of_client_file_name}, "Form 1087 - Self Declaration of Income/No Income Form"), "Form 1087, ", ""),
+          if(contains(${list_of_client_file_name}, "Form 1084 - 3rd Party Income Verification"), "Form 1084, ", "")
         )
       ) - 2
     )
   ),
   "0"
 )
-
 
 
 
