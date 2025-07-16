@@ -20,6 +20,13 @@ if(
   0
 )
 
+Disability Verification
+
+if(
+  contains(${list_of_client_file_name}, "Disability Verification"),
+  1,
+  0
+)
 
 Proof of Income
 
