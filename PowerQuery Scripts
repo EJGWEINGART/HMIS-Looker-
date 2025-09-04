@@ -1,3 +1,27 @@
+
+
+
+________________________________________
+Health Insurance Column Flag
+
+let
+  fileText = if [#"List of Client File Name"] = null then "" else Text.From([#"List of Client File Name"]),
+  matches = List.RemoveNulls({
+    if Text.Contains(fileText, "Medicaid or Medicare Card", Comparer.OrdinalIgnoreCase) then "Medicare/Medicaid" else null,
+    if Text.Contains(fileText, "Health Insurance Documentation", Comparer.OrdinalIgnoreCase) then "Other Health Insurance" else null
+  }),
+  listText = Text.Combine(matches, ", "),
+  result = if Text.Length(listText) > 0 then "1 - " & listText else "0"
+in
+  result
+
+
+
+
+
+
+
+________________________________________
 6.1 CES Status
 Description: flags whether the client’s CES assessment is current, overdue, or missing.
 if [Latest CES Assessment Date] = null then
