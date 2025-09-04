@@ -34,6 +34,35 @@ in
     else
         "Not Housing Matching Ready"
 
+
+
+________________________________________
+Financial Documents Column Flag
+
+let
+  fileText = if [#"List of Client File Name"] = null then "" else Text.From([#"List of Client File Name"]),
+  matches = List.RemoveNulls({
+    if Text.Contains(fileText, "Pay Stub", Comparer.OrdinalIgnoreCase) then "Pay Stub" else null,
+    if Text.Contains(fileText, "Supplemental Security Disability Income (SSDI) Forms", Comparer.OrdinalIgnoreCase) then "SSDI" else null,
+    if Text.Contains(fileText, "Supplemental Security Income (SSI) Forms", Comparer.OrdinalIgnoreCase) then "SSI" else null,
+    if Text.Contains(fileText, "General Relief (GR) Form", Comparer.OrdinalIgnoreCase) then "GR" else null,
+    if Text.Contains(fileText, "Food Stamp Card or Award Letter", Comparer.OrdinalIgnoreCase) then "Food Stamp" else null,
+    if Text.Contains(fileText, "CalWORKS Forms", Comparer.OrdinalIgnoreCase) then "CalWORKS" else null,
+    if Text.Contains(fileText, "Form 1087 - Self Declaration of Income/No Income Form", Comparer.OrdinalIgnoreCase) then "Form 1087" else null,
+    if Text.Contains(fileText, "Form 1084 - 3rd Party Income Verification", Comparer.OrdinalIgnoreCase) then "Form 1084" else null,
+    if Text.Contains(fileText, "Alimony Agreement", Comparer.OrdinalIgnoreCase) then "Alimony Agreement" else null,
+    if Text.Contains(fileText, "Social Security (NUMI) Printout", Comparer.OrdinalIgnoreCase) then "Social Security (NUMI) Printout" else null,
+    if Text.Contains(fileText, "Tax Return", Comparer.OrdinalIgnoreCase) then "Tax Return" else null,
+    if Text.Contains(fileText, "Veterans Affairs (VA) Benefits Award Letter", Comparer.OrdinalIgnoreCase) then "Veterans Affairs (VA) Benefits Award Letter" else null,
+    if Text.Contains(fileText, "Self Employment Document", Comparer.OrdinalIgnoreCase) then "Self Employment Document" else null,
+    if Text.Contains(fileText, "Other Financial Document", Comparer.OrdinalIgnoreCase) then "Other Financial Document" else null
+  }),
+  listText = Text.Combine(matches, ", "),
+  result = if Text.Length(listText) > 0 then "1 - " & listText else "0"
+in
+  result
+
+
 ________________________________________
 6.4 Intervention Alert
 Description: highlights high-priority clients based on days in project and document status.
