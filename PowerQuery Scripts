@@ -66,7 +66,7 @@ ________________________________________
 6.2 Document Ready
 Description: returns “Document Ready” only when all required identity documents are present.
 if [CDL or State ID] = 1 
-   and [SSN CARD] = 1 
+   and [SSN Card] = 1 
    and Text.Contains([Proof of Income], "1") then
     "Document Ready" 
 else
@@ -81,7 +81,7 @@ let
             else [CES Assessment Score]
 in
     if [CDL or State ID] = 1
-       and [SSN CARD]  = 1
+       and [SSN Card]  = 1
        and Text.Contains([Proof of Income], "1")
        and score >= 8 then
         "Housing Matching Ready"
