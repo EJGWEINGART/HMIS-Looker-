@@ -76,22 +76,39 @@ ________________________________________
 6.3 Housing Matching Ready
 Description: requires the three documents plus a CES score ≥ 8 (null scores count as 0).
 let
-    score = if [CES Assessment Score] = null 
-            then 0 
-            else [CES Assessment Score]
+    // Normalize fields
+    Score =
+        if [Assessment Score] = null then 0 else [Assessment Score],
+
+    SurveyName =
+        if [Survey Name] = null then "" else Text.Trim([Survey Name]),
+
+    // Pick threshold by survey:
+    // - "CES" anywhere in the name -> >= 8
+    // - exactly "Los Angeles Housing Assessment Tool (LA HAT)" -> >= 17
+    Threshold =
+        if Text.Contains(Text.Upper(SurveyName), "CES")
+            then 8
+        else if SurveyName = "Los Angeles Housing Assessment Tool (LA HAT)"
+            then 17
+        else null,   // no threshold if survey isn't recognized
+
+    HasDocsAndIncome =
+        [CDL or State ID] = 1
+        and [SSN Card] = 1
+        and Text.Contains(Text.From([Proof of Income]), "1"),
+
+    IsReady =
+        HasDocsAndIncome
+        and Threshold <> null
+        and Score >= Threshold
 in
-    if [CDL or State ID] = 1
-       and [SSN Card]  = 1
-       and Text.Contains([Proof of Income], "1")
-       and score >= 8 then
-        "Housing Matching Ready"
-    else
-        "Not Housing Matching Ready"
+    if IsReady then "Housing Matching Ready" else "Not Housing Matching Ready"
 
 
 
 ________________________________________
-Financial Documents Column Flag
+Proof of Income
 
 let
   fileText = if [#"List of Client File Name"] = null then "" else Text.From([#"List of Client File Name"]),
