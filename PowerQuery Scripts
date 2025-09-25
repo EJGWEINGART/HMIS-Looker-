@@ -193,6 +193,6 @@ let
     n = if t[HasError] or t[Value] = null then 0 else t[Value]
 in
     if n >= 5 then
-        "More than 5 case notes"
+        "5 or more case notes"
     else
         Text.From(n) & " case note" & (if n = 1 then "" else "s")
