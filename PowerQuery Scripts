@@ -138,28 +138,49 @@ ________________________________________
 6.4 Intervention Alert
 Description: highlights high-priority clients based on days in project and document status.
 
+// Intervention Alert
+// Description: highlights high-priority clients based on days in project and document/assessment status.
 let
-    cesStatus   = [CES Status],
-    cesScore    = [CES Assessment Score],
-    days        = [Enrollments Days in Project],
-    docsReady   = [Document Ready] <> "Not Document Ready",
-    lowCES      = cesScore = null or cesScore < 8,
-    cesExpired  = cesStatus = "Renewal Overdue",
-    longStay    = days <> null and days >= 120,
-    midStay     = days <> null and days >= 75
+    // Inputs (with safe defaults/typing)
+    RawScore    = [Assessment Score],
+    Score       = try Number.From(RawScore) otherwise null,   // "" or text -> null
+    SurveyName  = if [Survey Name] = null then "" else Text.Trim([Survey Name]),
+    Status      = try [Assessment Status] otherwise (try [CES Status] otherwise null),
+    Days        = [Enrollments Days in Project],
+    DocsReady   = [Document Ready] <> "Not Document Ready",
+
+    // Threshold by survey:
+    // - name contains "CES" -> 8
+    // - exactly "Los Angeles Housing Assessment Tool (LA HAT)" -> 17
+    Threshold =
+        if Text.Contains(Text.Upper(SurveyName), "CES") then 8
+        else if SurveyName = "Los Angeles Housing Assessment Tool (LA HAT)" then 17
+        else null,  // unrecognized survey (no threshold)
+
+    // Flags
+    LongStay    = Days <> null and Days >= 120,
+    MidStay     = Days <> null and Days >= 75,
+    LowAssessment =
+        Threshold <> null and (Score = null or Score < Threshold),
+    AssessmentExpired =
+        Status = "Renewal Overdue" or Status = "Expired",
+
+    // Output
+    Result =
+        if      LongStay and not DocsReady then
+                "≥120 days & missing docs – ESCALATE"
+        else if LongStay and AssessmentExpired then
+                "≥120 days & assessment expired – ESCALATE"
+        else if LongStay and LowAssessment then
+                "≥120 days & score below threshold – ESCALATE"
+        else if LongStay then
+                "≥120 days & docs/assessment OK – monitor"
+        else if MidStay and not DocsReady then
+                "75–119 days & missing docs – ACTION"
+        else if MidStay and (AssessmentExpired or LowAssessment) then
+                "75–119 days & assessment risk – ACTION"
+        else
+                null
 in
-    if      longStay and not docsReady then
-            "≥120 days & missing docs – ESCALATE"
-    else if longStay and cesExpired then
-            "≥120 days & CES expired – ESCALATE"
-    else if longStay and lowCES then
-            "≥120 days & CES<8 – ESCALATE"
-    else if longStay then
-            "≥120 days & docs/CES OK – monitor"
-    else if midStay and not docsReady then
-            "75–119 days & missing docs – ACTION"
-    else if midStay and (cesExpired or lowCES) then
-            "75–119 days & CES risk – ACTION"
-    else
-            null
+    Result
 
