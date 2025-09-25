@@ -184,3 +184,15 @@ let
 in
     Result
 
+__________________________________________________________________________________________________
+Case Count Category
+
+let
+    v = [#"MonthName Case Note Count"],
+    t = try Number.From(v),
+    n = if t[HasError] or t[Value] = null then 0 else t[Value]
+in
+    if n >= 5 then
+        "More than 5 case notes"
+    else
+        Text.From(n) & " case note" & (if n = 1 then "" else "s")
