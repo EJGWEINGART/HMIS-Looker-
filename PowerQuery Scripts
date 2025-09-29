@@ -180,7 +180,7 @@ let
         else if MidStay and (AssessmentExpired or LowAssessment) then
                 "75–119 days & assessment risk – ACTION"
         else
-                null
+                "No Action Needed"
 in
     Result
 
