@@ -207,10 +207,12 @@ ________________________________________________________________________________
 Enrollment Days Tier
 
 
-try Number.From([Enrollments Days in Project]) otherwise null
+let
+    d = try Number.From([Enrollments Days in Project]) otherwise null
 in
-  if d = null then null
-  else if d < 60 then "Tier 1 - <60 Days"
-  else if d <= 120 then "Tier 2 - 60-120 Days"
-  else if d <= 365 then "Tier 3 - 120-365 Days"
-  else "Tier 4 - >365 Days")
+    if d = null then null
+    else if d < 60 then "Tier 1 - <60 Days"
+    else if d <= 120 then "Tier 2 - 60-120 Days"
+    else if d <= 365 then "Tier 3 - 120-365 Days"
+    else "Tier 4 - >365 Days"
+
