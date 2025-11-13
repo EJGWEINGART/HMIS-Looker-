@@ -55,10 +55,10 @@ ________________________________________
 6.1 CES Status
 Description: flags whether the client’s CES assessment is current, overdue, or missing.
 if [Latest CES Assessment Date] = null then
-    "CES Not Done"
+    "Assessment Not Done"
 else if Duration.Days(Date.From(DateTime.LocalNow()) 
        - Date.From([Latest CES Assessment Date])) > 730 then
-    "Renewal Overdue"
+    "Review for life change"
 else
     "Current"
 
