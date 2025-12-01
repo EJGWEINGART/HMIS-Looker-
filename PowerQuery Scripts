@@ -58,7 +58,7 @@ if [Latest CES Assessment Date] = null then
     "Assessment Not Done"
 else if Duration.Days(Date.From(DateTime.LocalNow()) 
        - Date.From([Latest CES Assessment Date])) > 730 then
-    "Review for life change"
+    "Over 2 Years, Review for life change"
 else
     "Current"
 
