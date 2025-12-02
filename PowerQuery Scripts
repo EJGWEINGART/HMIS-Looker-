@@ -216,3 +216,28 @@ in
     else if d <= 365 then "Tier 3 - 120-365 Days"
     else "Tier 4 - >365 Days"
 
+______________________________________________________________________________________________
+Missing Documents
+
+let
+    MissingList = 
+        List.RemoveNulls({
+            if [SSN Card] = 0 then "SSN Card" else null,
+            if [Birth Certificate] = 0 then "Birth Certificate" else null,
+            if [CDL or State ID] = 0 then "CDL or State ID" else null,
+            if [Disability Verification] = 0 then "Disability Verification" else null,
+            if [Health Insurance Column Flag] = 0 then "Health Insurance" else null,
+
+            // Proof of Income is text like "1 - GR, Form 1087" or "0" or blank.
+            // Treat "0" or blank as missing:
+            if [Proof of Income] = null 
+                or Text.Trim([Proof of Income]) = "" 
+                or Text.Trim([Proof of Income]) = "0"
+            then "Proof of Income" 
+            else null
+        })
+in
+    if List.Count(MissingList) = 0 
+    then "All documents present"
+    else Text.Combine(MissingList, ", ")
+
