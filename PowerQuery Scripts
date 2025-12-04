@@ -22,6 +22,17 @@ let
   result = if Text.Contains(fileText, pattern, Comparer.OrdinalIgnoreCase) then 1 else 0
 in
   result
+
+________________________________________
+Homelessness Verification
+
+let
+  fileTextRaw = if [#"List of Client File Name"] = null then "" else Text.From([#"List of Client File Name"]),
+  fileText = Text.Replace(fileTextRaw, "’", "'"),
+  pattern = "Form 6053 - Los Angeles CoC Homelessness Verification",
+  result = if Text.Contains(fileText, pattern, Comparer.OrdinalIgnoreCase) then 1 else 0
+in
+  result
 ________________________________________
 Disability Verification
 let
